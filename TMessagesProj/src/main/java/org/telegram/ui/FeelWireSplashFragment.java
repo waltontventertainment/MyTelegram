@@ -192,7 +192,6 @@ public class FeelWireSplashFragment extends BaseFragment {
         fadeOut.start();
     }
 
-    @Override
     public boolean isSwipeBackEnabled() {
         return false;
     }
