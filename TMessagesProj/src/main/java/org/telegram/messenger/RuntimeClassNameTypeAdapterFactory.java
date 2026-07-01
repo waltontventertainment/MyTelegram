@@ -119,7 +119,7 @@ public final class RuntimeClassNameTypeAdapterFactory<T> implements TypeAdapterF
 
     private RuntimeClassNameTypeAdapterFactory(Class<?> baseType, String typeFieldName, ExclusionStrategy exclusionStrategy) {
         if (typeFieldName == null || baseType == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("baseType and typeFieldName must not be null");
         }
         this.baseType = baseType;
         this.typeFieldName = typeFieldName;
@@ -151,7 +151,7 @@ public final class RuntimeClassNameTypeAdapterFactory<T> implements TypeAdapterF
      */
     public RuntimeClassNameTypeAdapterFactory<T> registerSubtype(Class<? extends T> type, String label) {
         if (type == null || label == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("type and label must not be null");
         }
         if (subtypeToLabel.containsKey(type) || labelToSubtype.containsKey(label)) {
             throw new IllegalArgumentException("types and labels must be unique");
@@ -174,7 +174,7 @@ public final class RuntimeClassNameTypeAdapterFactory<T> implements TypeAdapterF
 
     public <R> TypeAdapter<R> create(Gson gson, TypeToken<R> type) {
 
-        if (exclusionStrategy.shouldSkipClass(type.getRawType().getClass())) {
+        if (exclusionStrategy != null && exclusionStrategy.shouldSkipClass(type.getRawType().getClass())) {
             return null;
         }
         final Map<String, TypeAdapter<?>> labelToDelegate
@@ -182,19 +182,11 @@ public final class RuntimeClassNameTypeAdapterFactory<T> implements TypeAdapterF
         final Map<Class<?>, TypeAdapter<?>> subtypeToDelegate
                 = new LinkedHashMap<Class<?>, TypeAdapter<?>>();
 
-//    && !String.class.isAssignableFrom(type.getRawType())
-
         if (Object.class.isAssignableFrom(type.getRawType())) {
             TypeAdapter<?> delegate = gson.getDelegateAdapter(this, type);
             labelToDelegate.put(type.getRawType().getSimpleName(), delegate);
             subtypeToDelegate.put(type.getRawType(), delegate);
         }
-
-//    for (Map.Entry<String, Class<?>> entry : labelToSubtype.entrySet()) {
-//      TypeAdapter<?> delegate = gson.getDelegateAdapter(this, TypeToken.get(entry.getValue()));
-//      labelToDelegate.put(entry.getKey(), delegate);
-//      subtypeToDelegate.put(entry.getValue(), delegate);
-//    }
 
         return new TypeAdapter<R>() {
             @SuppressWarnings("unchecked")
@@ -212,9 +204,15 @@ public final class RuntimeClassNameTypeAdapterFactory<T> implements TypeAdapterF
                     if (delegate == null) {
                         Class<R> aClass;
                         try {
+                            // Fix: Validate class name format to prevent security issues
+                            if (!isValidClassName(label)) {
+                                throw new JsonParseException("Invalid class name format: " + label);
+                            }
                             aClass = (Class<R>) Class.forName(label);
                         } catch (ClassNotFoundException e) {
                             throw new JsonParseException("Cannot find class " + label, e);
+                        } catch (SecurityException e) {
+                            throw new JsonParseException("Security exception while loading class " + label, e);
                         }
 
                         TypeToken<R> subClass = TypeToken.get(aClass);
@@ -276,6 +274,18 @@ public final class RuntimeClassNameTypeAdapterFactory<T> implements TypeAdapterF
                     }
                 }
                 return null;
+            }
+
+            /**
+             * Validates class name format to prevent injection attacks.
+             * Allows standard Java class names with packages.
+             */
+            private boolean isValidClassName(String className) {
+                if (className == null || className.isEmpty()) {
+                    return false;
+                }
+                // Allow standard Java class names: alphanumeric, dots, and dollar signs for inner classes
+                return className.matches("[a-zA-Z0-9._$]+");
             }
         }.nullSafe();
     }
