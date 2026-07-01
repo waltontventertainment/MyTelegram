@@ -21,6 +21,9 @@ class JniHelper {
   // TODO(bugs.webrtc.org/8632): Remove.
   @CalledByNative
   static byte[] getStringBytes(String s) {
+    if (s == null) {
+      throw new IllegalArgumentException("String parameter cannot be null");
+    }
     try {
       return s.getBytes("ISO-8859-1");
     } catch (UnsupportedEncodingException e) {
@@ -37,12 +40,18 @@ class JniHelper {
   // TODO(bugs.webrtc.org/8606): Remove.
   @CalledByNative
   static Object getKey(Map.Entry entry) {
+    if (entry == null) {
+      throw new IllegalArgumentException("Map.Entry cannot be null");
+    }
     return entry.getKey();
   }
 
   // TODO(bugs.webrtc.org/8606): Remove.
   @CalledByNative
   static Object getValue(Map.Entry entry) {
+    if (entry == null) {
+      throw new IllegalArgumentException("Map.Entry cannot be null");
+    }
     return entry.getValue();
   }
 }
