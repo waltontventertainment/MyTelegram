@@ -49,6 +49,10 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("AdwHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
 
             final Intent intent = new Intent(INTENT_UPDATE_COUNTER);
             intent.putExtra(PACKAGENAME, componentName.getPackageName());
@@ -77,6 +81,10 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("ApexHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
 
             final Intent intent = new Intent(INTENT_UPDATE_COUNTER);
             intent.putExtra(PACKAGENAME, componentName.getPackageName());
@@ -102,6 +110,11 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("AsusHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
+
             final Intent intent = new Intent(INTENT_ACTION);
             intent.putExtra(INTENT_EXTRA_BADGE_COUNT, badgeCount);
             intent.putExtra(INTENT_EXTRA_PACKAGENAME, componentName.getPackageName());
@@ -126,6 +139,11 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("DefaultBadger: componentName is null, cannot execute badge");
+                return;
+            }
+
             final Intent intent = new Intent(INTENT_ACTION);
             intent.putExtra(INTENT_EXTRA_BADGE_COUNT, badgeCount);
             intent.putExtra(INTENT_EXTRA_PACKAGENAME, componentName.getPackageName());
@@ -153,6 +171,11 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("HuaweiHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
+
             final Bundle localBundle = new Bundle();
             localBundle.putString("package", ApplicationLoader.applicationContext.getPackageName());
             localBundle.putString("class", componentName.getClassName());
@@ -185,6 +208,10 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("NewHtcHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
 
             final Intent intent1 = new Intent(INTENT_SET_NOTIFICATION);
             intent1.putExtra(EXTRA_COMPONENT, componentName.flattenToShortString());
@@ -216,6 +243,11 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("NovaHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
+
             ContentValues contentValues = new ContentValues();
             contentValues.put(TAG, componentName.getPackageName() + "/" + componentName.getClassName());
             contentValues.put(COUNT, badgeCount);
@@ -272,6 +304,11 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("SamsungHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
+
             try {
                 if (defaultBadger == null) {
                     defaultBadger = new DefaultBadger();
@@ -361,6 +398,11 @@ public class NotificationBadge {
         }
 
         private static void executeBadgeByBroadcast(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("SonyHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
+
             final Intent intent = new Intent(INTENT_ACTION);
             intent.putExtra(INTENT_EXTRA_PACKAGE_NAME, componentName.getPackageName());
             intent.putExtra(INTENT_EXTRA_ACTIVITY_NAME, componentName.getClassName());
@@ -423,6 +465,11 @@ public class NotificationBadge {
                 field.setAccessible(true);
                 field.set(miuiNotification, String.valueOf(badgeCount == 0 ? "" : badgeCount));
             } catch (Throwable e) {
+                if (componentName == null) {
+                    FileLog.w("XiaomiHomeBadger: componentName is null, cannot execute badge");
+                    return;
+                }
+
                 final Intent localIntent = new Intent(INTENT_ACTION);
                 localIntent.putExtra(EXTRA_UPDATE_APP_COMPONENT_NAME, componentName.getPackageName() + "/" + componentName.getClassName());
                 localIntent.putExtra(EXTRA_UPDATE_APP_MSG_TEXT, String.valueOf(badgeCount == 0 ? "" : badgeCount));
@@ -478,6 +525,11 @@ public class NotificationBadge {
 
         @Override
         public void executeBadge(int badgeCount) {
+            if (componentName == null) {
+                FileLog.w("VivoHomeBadger: componentName is null, cannot execute badge");
+                return;
+            }
+
             Intent intent = new Intent("launcher.action.CHANGE_APPLICATION_NOTIFICATION_NUM");
             intent.setPackage("com.vivo.launcher");
             intent.putExtra("packageName", ApplicationLoader.applicationContext.getPackageName());
