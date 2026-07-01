@@ -58,9 +58,24 @@ public class TLClassStore {
                 response = (TLObject) objClass.newInstance();
             } catch (Throwable e) {
                 FileLog.e(e);
+                if (exception) {
+                    throw new RuntimeException("Failed to instantiate TLObject class: " + objClass.getName(), e);
+                }
                 return null;
             }
-            response.readParams(stream, exception);
+            
+            // FIX: Check if response is null before calling readParams()
+            if (response != null) {
+                try {
+                    response.readParams(stream, exception);
+                } catch (Throwable e) {
+                    FileLog.e(e);
+                    if (exception) {
+                        throw new RuntimeException("Failed to read TLObject params", e);
+                    }
+                    return null;
+                }
+            }
             return response;
         }
         return null;
