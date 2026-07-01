@@ -1,0 +1,28 @@
+# Local properties — API keys, SDK path (NEVER upload)
+local.properties
+
+# Keystore files
+*.keystore
+*.jks
+TMessagesProj/config/release/
+
+# Android build output
+build/
+*/build/
+*.apk
+*.aab
+
+# Gradle
+.gradle/
+gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Google services (contains Firebase API key)
+TMessagesProj/google-services.json
+
+# Large zip files
+*.zip
